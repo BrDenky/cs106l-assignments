@@ -1,11 +1,28 @@
-Before submitting this file, make sure that there are no more TODO
-placeholders remaining in the file (and remove this comment too).
-
 Marriage Pact
 -------------
 
 Q1. It is your choice to use either an ordered or unordered set. In a few sentences, what are some of the tradeoffs between the two? Additionally, please give an example (that has not been shown in lecture) of a valid hash function that could be used to hash student names for an unordered set.
-A1. TODO
+A1. The main tradeoffs between ordered (std::set) and unordered (std::unordered_set) sets are:
+1. Time Complexity: std::set operations (insert, delete, find) have O(log n) complexity, while std::unordered_set operations have average O(1) complexity but worst-case O(n).
+2. Memory Usage: std::unordered_set typically requires more memory due to the hash table implementation.
+3. Iteration Order: std::set maintains elements in sorted order, while std::unordered_set has no guaranteed order.
+4. Implementation: std::set is typically implemented as a balanced binary search tree, while std::unordered_set uses a hash table.
+
+A hash function for student names could be: sum the ASCII values of each character in the name, multiply by a prime number (like 31), and take the modulo of a large prime. For example:
+```cpp
+size_t hash_name(const std::string& name) {
+    size_t hash = 0;
+    for (char c : name) {
+        hash = (hash * 31) + c;
+    }
+    return hash;
+}
+```
 
 Q2. Note that we are saving pointers to names in the queue, not names themselves. Why might this be desired in this problem? What happens if the original set where the names are stored goes out of scope and the pointers are referenced?
-A2. TODO
+A2. Using pointers to names instead of copying the names themselves offers several advantages:
+1. Memory Efficiency: We avoid duplicating potentially large strings, saving memory.
+2. Performance: Copying pointers is faster than copying entire strings.
+3. Consistency: Any changes to the original names would be reflected in our queue.
+
+However, if the original set where the names are stored goes out of scope, the pointers in the queue would become dangling pointers pointing to deallocated memory. Any attempt to dereference these pointers would result in undefined behavior, likely causing program crashes or unpredictable results. This is a critical issue known as a "use-after-free" bug. To prevent this, we must ensure that the set outlives any pointers to its elements, or use alternative approaches like shared ownership semantics with smart pointers.

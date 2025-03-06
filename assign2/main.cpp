@@ -13,8 +13,9 @@
 #include <set>
 #include <string>
 #include <unordered_set>
+#include <ctime>
 
-std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
+std::string kYourName = "Mateo Pilaquinga"; // Don't forget to change this!
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
@@ -27,9 +28,43 @@ std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
  * below it) to use a `std::unordered_set` instead. If you do so, make sure
  * to also change the corresponding functions in `utils.h`.
  */
-std::set<std::string> get_applicants(std::string filename) {
-  // STUDENT TODO: Implement this function.
+
+ std::string get_initials(const std::string& name) {
+  std::string initials = "";
+  bool newWord = true;
+  
+  for (char c : name) {
+      if (c == ' ' || c == '\t') {
+          newWord = true;
+      } else if (newWord) {
+          initials += c;
+          newWord = false;
+      }
+  }
+  
+  return initials;
 }
+
+std::set<std::string> get_applicants(std::string filename) {
+  std :: set <std :: string> applicants;
+  std :: ifstream file(filename);
+
+  if (!file.is_open()) {
+    std :: cerr << "Error: Could not open file " << filename << std :: endl;
+    return applicants;
+  }
+
+  std :: string line;
+
+  while (std :: getline(file, line)) {
+    if (!line.empty()){
+      applicants.insert(line);
+    }
+  }
+
+  file.close();
+  return applicants;
+} 
 
 /**
  * Takes in a set of student names by reference and returns a queue of names
@@ -40,7 +75,15 @@ std::set<std::string> get_applicants(std::string filename) {
  * @return          A queue containing pointers to each matching name.
  */
 std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
-  // STUDENT TODO: Implement this function.
+  std :: queue<const std :: string*> matches;
+  std :: string target_initials = get_initials(name);
+
+  for (const auto& student : students) {
+    if (get_initials(student) == target_initials) {
+      matches.push(&student);
+    }
+  }
+  return matches;
 }
 
 /**
@@ -54,7 +97,43 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  *                Will return "NO MATCHES FOUND." if `matches` is empty.
  */
 std::string get_match(std::queue<const std::string*>& matches) {
-  // STUDENT TODO: Implement this function.
+  if (matches.empty()) {
+    return "No matches found.";
+  }
+
+  // Initialize random seed
+  std :: srand (static_cast<unsigned int>(std :: time(nullptr)));
+
+  // Picks a random element from the queue
+  int size = matches.size();
+  int random_index = std :: rand() % size;
+
+  // We create a temporary queue to handle our selection process
+  std :: queue<const std :: string*> temp_queue;
+  const std :: string* selected_match = nullptr;
+
+  // Bucle through the queue to find the randomly selected match
+  for (int i = 0; i < size; i++) {
+    const std :: string* current = matches.front();
+    matches.pop();
+
+    if (i == random_index){
+      selected_match = current;
+    }
+    temp_queue.push(current);
+  }
+
+  //Restore the original queue without the selected match
+  while (!temp_queue.empty()) {
+    const std :: string* current = temp_queue.front();
+    temp_queue.pop();
+
+    if (current != selected_match) {
+      matches.push(current);
+    }
+  }
+  return *selected_match;
+
 }
 
 /* #### Please don't remove this line! #### */
