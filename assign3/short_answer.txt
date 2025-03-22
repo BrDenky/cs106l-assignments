@@ -1,11 +1,8 @@
-Before submitting this file, make sure that there are no more TODO
-placeholders remaining in the file (and remove this comment too).
-
 Make a Class
 ------------
 
-Q1. What’s const-correctness and why is it important?
-A1. TODO
+Q1. What's const-correctness and why is it important?
+A1. Const-correctness is a design principle in C++ that ensures objects that should not be modified are declared as const. This means methods that don't modify an object's internal state should be marked as const, and references or pointers to objects that shouldn't be modified should also be declared as const. It's important because it provides additional type safety, prevents accidental data modifications, allows compiler optimizations, and improves code readability by clearly communicating the programmer's intent regarding what can be modified and what cannot.
 
 Q2. Is your class const-correct? How do you know?
-A2. TODO
+A2. Yes, my Student class is const-correct. The getter methods (getName(), getId(), getGPA()) are marked as const because they don't modify the internal state of the object and should be callable from const objects. In contrast, methods that modify state (setName(), setId(), addGrade(), and calculateGPA()) are not marked as const. Additionally, the class doesn't have members that expose its internal data in a way that could be modified without control, thus maintaining encapsulation and ensuring the internal state can only be modified through the appropriate non-const methods.
