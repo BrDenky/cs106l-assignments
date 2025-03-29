@@ -59,7 +59,73 @@ void User::set_friend(size_t index, const std::string& name)
   _friends[index] = name;
 }
 
-/** 
- * STUDENT TODO:
- * The definitions for your custom operators and special member functions will go here!
- */
+
+// 1 Part
+std::ostream& operator<<(std::ostream& os, const User& user) {
+  os << "User(name=" << user._name << ", friends=[";
+  for (size_t i = 0; i < user._size; ++i) {
+    os << user._friends[i];
+    if (i < user._size - 1) {
+      os << ", ";
+    }
+  }
+  os << "])";
+  return os;
+}
+
+//Destructor
+User::~User() {
+  delete[] _friends;
+}
+
+//Copy constructor
+User::User(const User& user) 
+  : _name(user._name)
+  , _size(user._size)
+  , _capacity(user._capacity)
+  , _friends(nullptr)
+{
+  if (user._capacity > 0) {
+    _friends = new std::string[_capacity];
+    for (size_t i = 0; i < _size; ++i) {
+      _friends[i] = user._friends[i];
+    }
+  }
+}
+
+// Copy assignment operator
+User& User::operator=(const User& user) {
+  if (this != &user) {
+
+    delete[] _friends;
+
+    _name = user._name;
+    _size = user._size;
+    _capacity = user._capacity;
+
+    if (_capacity > 0) {
+      _friends = new std::string[_capacity];
+      for (size_t i = 0; i < _size; ++i) {
+        _friends[i] = user._friends[i];
+      }
+    } else {
+      _friends = nullptr;
+    }
+  }
+  return *this;
+}
+
+// Operator += to add friends symmetrically
+User& User::operator+=(User& rhs) {
+
+  this->add_friend(rhs._name);
+
+  rhs.add_friend(this->_name);
+  
+  return *this;
+}
+
+// Operator < to compare users alphabetically
+bool User::operator<(const User& rhs) const {
+  return _name < rhs._name;
+}
